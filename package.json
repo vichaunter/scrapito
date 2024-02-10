@@ -1,0 +1,29 @@
+{
+  "name": "scrapito",
+  "version": "1.0.0",
+  "description": "Scraper service for only one purpose, get receive urls and return sources",
+  "main": "src/index.ts",
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "got": "^14.2.0",
+    "picocolors": "^1.0.0",
+    "simppeteer": "^1.0.1",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/got": "^9.6.12",
+    "@types/node": "^20.11.17",
+    "@types/uuid": "^9.0.8",
+    "nodemon": "^3.0.3",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.3.3"
+  },
+  "scripts": {
+    "start": "nodemon --watch \"src/**\" --ext \"ts,json\" --ignore \"src/**/*.spec.ts\" --exec \"ts-node src/index.ts\"",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC"
+}
