@@ -1,13 +1,8 @@
 import pc from "picocolors";
 import simppeteer from "simppeteer";
-import serviceConfig from "./config";
-import { Task } from "./types";
-
-const log = (message: string) => {
-  console.log(pc.white("-------------------------------"));
-  console.log(message);
-  console.log(pc.white("-------------------------------"));
-};
+import serviceConfig, { log } from "./config";
+import { Result, Task } from "./types";
+import { compress } from "./helpers";
 
 export async function fetchTask() {
   const url = serviceConfig.fetchEndpoint;
@@ -16,7 +11,30 @@ export async function fetchTask() {
 }
 
 export async function sendTask(source: string) {
-  console.log(source);
+  if (!serviceConfig.sendEndpoint) {
+    !serviceConfig.sendEndpoint && new Error("Missing SEND_ENDPOINT");
+    return;
+  }
+
+  const data: Result = {
+    id: serviceConfig.id,
+    source,
+  };
+  try {
+    return fetch(serviceConfig.sendEndpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Content-Encoding": "gzip",
+      },
+      body: compress(data),
+    });
+
+    // Handle successful response here (e.g., await response.json())
+  } catch (error) {
+    console.error("Error sending request:", error);
+    // Handle errors appropriately
+  }
 }
 
 export async function runTask(task: Task) {
@@ -30,7 +48,10 @@ export async function scraper() {
   if (!task?.url) return false;
 
   const source = await runTask(task);
-  if (!source) return false;
+  if (!source) {
+    log(`${pc.red("Missed source for task:")} ${pc.white(task.url)}`);
+    return false;
+  }
 
   sendTask(source);
 
