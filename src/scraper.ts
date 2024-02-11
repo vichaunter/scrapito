@@ -5,16 +5,32 @@ import { Result, Task } from "./types";
 import { compress } from "./helpers";
 
 export async function fetchTask() {
+  let retries = 0;
   const url = serviceConfig.fetchEndpoint;
 
-  return fetch(url).then((res) => res.json());
-}
+  let result: Task;
+  try {
+    result = await fetch(url).then((res) => res.json());
+  } catch (err) {
+    if (retries < 3) {
+      await new Promise((resolve) => setTimeout(resolve, 3000));
 
-export async function sendTask(source: string) {
-  if (!serviceConfig.sendEndpoint) {
-    !serviceConfig.sendEndpoint && new Error("Missing SEND_ENDPOINT");
-    return;
+      console.error("Error fetching task, retrying");
+      retries++;
+      return fetchTask();
+    }
+
+    console.error("Error fetching task, retries exceeded, skipping task");
+    retries = 0;
+    return null;
   }
+
+  if (result.scraperId) {
+    serviceConfig.id = result.scraperId;
+  }
+
+  return result;
+}
 
   const data: Result = {
     id: serviceConfig.id,
