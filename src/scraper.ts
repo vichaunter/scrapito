@@ -32,10 +32,13 @@ export async function fetchTask() {
   return result;
 }
 
+export async function sendTask(task: Task, source: string) {
   const data: Result = {
-    id: serviceConfig.id,
+    scraperId: serviceConfig.id,
+    ...task,
     source,
   };
+
   try {
     return fetch(serviceConfig.sendEndpoint, {
       method: "POST",
@@ -69,7 +72,7 @@ export async function scraper() {
     return false;
   }
 
-  sendTask(source);
+  sendTask(task, source);
 
   log(pc.green("Scrape ended"));
 

@@ -2,8 +2,8 @@ import { v4 } from "uuid";
 import { ServiceMode } from "./types";
 import pc from "picocolors";
 
-const DEMO_ENDPOINT =
-  "https://gist.githubusercontent.com/vichaunter/939093f6e295df03e7962e849919e703/raw/46c53f8a3bd15674f68dc079c01d124e3d7d9fd5/scrapito_example_fetch.json";
+const DEV_FETCH_ENDPOINT = "http://localhost:4000/get-task";
+const DEV_SEND_ENDPOINT = "http://localhost:4000/send-data";
 
 const INTERVAL = !isNaN(Number(process.env.INTERVAL))
   ? Number(process.env.INTERVAL)
@@ -11,8 +11,8 @@ const INTERVAL = !isNaN(Number(process.env.INTERVAL))
 
 const serviceConfig = {
   id: v4(),
-  fetchEndpoint: process.env.FETCH_ENDPOINT || DEMO_ENDPOINT,
-  sendEndpoint: process.env.SEND_ENDPOINT,
+  fetchEndpoint: process.env.FETCH_ENDPOINT || DEV_FETCH_ENDPOINT,
+  sendEndpoint: process.env.SEND_ENDPOINT || DEV_SEND_ENDPOINT,
   interval: INTERVAL,
   mode: process.env.MODE as ServiceMode,
 };
